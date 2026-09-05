@@ -60,6 +60,27 @@
     }
     .figure-caption { font-size: 0.9rem; color: #555; }
 
+    /* Diagrams: scroll inside their own box rather than squeezing text on phones. */
+    .diagram { overflow-x: auto; margin: 0.5rem 0 0.5rem; }
+    .diagram svg { display: block; width: 100%; height: auto; }
+    .dg-box { fill: #ffffff; stroke-width: 1.5; }
+    .dg-en { stroke: #2f4a7d; }
+    .dg-vi { stroke: #c8303a; }
+    .dg-en-fill { fill: #eef2f8; stroke: #2f4a7d; stroke-width: 1.5; }
+    .dg-vi-fill { fill: #fdeef0; stroke: #c8303a; stroke-width: 1.5; }
+    .dg-proc { fill: #f4f6f9; stroke: #8a93a3; stroke-width: 1.5; }
+    .dg-out { fill: #eaf5ef; stroke: #1f7a52; stroke-width: 1.5; }
+    .dg-note { fill: #fbfbfc; stroke: #b9c0cc; stroke-width: 1.2; stroke-dasharray: 4 3; }
+    .dg-t { font-family: 'Google Sans', 'Noto Sans', sans-serif; font-size: 12.5px; font-weight: 700; fill: #363636; }
+    .dg-t-en { fill: #2f4a7d; }
+    .dg-t-vi { fill: #c8303a; }
+    .dg-t-out { fill: #1f7a52; }
+    .dg-s { font-family: 'Google Sans', 'Noto Sans', sans-serif; font-size: 10.5px; fill: #5a6472; }
+    .dg-lbl { font-family: 'Google Sans', 'Noto Sans', sans-serif; font-size: 10px; fill: #6f7987; }
+    .dg-stage { font-family: 'Google Sans', 'Noto Sans', sans-serif; font-size: 11px; font-weight: 700; fill: #9aa3b0; letter-spacing: 0.04em; }
+    .dg-ar { stroke: #8a93a3; stroke-width: 1.6; fill: none; }
+
+
     /* Authors */
     .publication-authors .author-block {
       font-family: 'Google Sans', sans-serif;
@@ -431,35 +452,72 @@
           </p>
         </div>
 
-        <div class="columns">
-          <div class="column">
-            <div class="finding-card">
-              <p class="finding-number">1</p>
-              <p><b>Translate, then post-edit by hand.</b> We translate with
-              <span class="setting-code">vinai-translate-en2vi-v2</span>, then Vietnamese medical
-              experts &mdash; final-year medical students and doctors &mdash; review every sentence
-              for terminology, fluency, and preserved biomedical meaning, deciding per term whether
-              to translate it or keep the English form.</p>
-            </div>
-          </div>
-          <div class="column">
-            <div class="finding-card">
-              <p class="finding-number">2</p>
-              <p><b>Project the labels with an LLM.</b> We map each English entity onto its
-              Vietnamese span with <span class="setting-code">gpt-5.2</span>, keeping the same
-              semantic type. Marker-based and token-alignment projection do not fit here: the
-              post-edited text is already final and often paraphrases non-literally.</p>
-            </div>
-          </div>
-          <div class="column">
-            <div class="finding-card">
-              <p class="finding-number">3</p>
-              <p><b>Verify and adjudicate.</b> Automatic consistency checks flag 1.77% of sentence
-              pairs for manual review in Label Studio. Two authors then independently audit the
-              450-sentence mini-test and correct every confirmed error by consensus.</p>
-            </div>
-          </div>
+        <div class="diagram">
+      <svg viewBox="0 0 1114 372" role="img" aria-labelledby="pipe-title pipe-desc" style="min-width:840px">
+      <title id="pipe-title">En-ViMedNER corpus construction pipeline</title>
+      <desc id="pipe-desc">English MedMentions sentences and their UMLS spans are machine translated and post-edited by medical experts; an LLM then projects each English entity span onto the post-edited Vietnamese text; automatic checks and human review produce the released corpus.</desc>
+      <defs><marker id="dg-a1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#8a93a3"/></marker></defs>
+      <text x="92" y="32" text-anchor="middle" class="dg-stage">SOURCE</text>
+      <text x="371" y="32" text-anchor="middle" class="dg-stage">TRANSLATE &amp; POST-EDIT</text>
+      <text x="650" y="32" text-anchor="middle" class="dg-stage">PROJECT</text>
+      <text x="929" y="32" text-anchor="middle" class="dg-stage">VERIFY &amp; RELEASE</text>
+      <rect x="12" y="45" width="160" height="72" rx="8" class="dg-box dg-en"/>
+      <text x="92" y="72" text-anchor="middle" class="dg-t dg-t-en">MedMentions ST21pv</text>
+      <text x="92" y="92" text-anchor="middle" class="dg-s">4,392 PubMed abstracts</text>
+      <text x="92" y="107" text-anchor="middle" class="dg-s">21 UMLS semantic types</text>
+      <rect x="198" y="45" width="160" height="72" rx="8" class="dg-box dg-en"/>
+      <text x="278" y="72" text-anchor="middle" class="dg-t dg-t-en">English sentences</text>
+      <text x="278" y="92" text-anchor="middle" class="dg-s">44,892 sentences with</text>
+      <text x="278" y="107" text-anchor="middle" class="dg-s">UMLS entity spans</text>
+      <rect x="198" y="255" width="160" height="72" rx="8" class="dg-box dg-vi"/>
+      <text x="278" y="280" text-anchor="middle" class="dg-t dg-t-vi">Machine translation</text>
+      <text x="278" y="298" text-anchor="middle" class="dg-s">vinai-translate-en2vi-v2</text>
+      <rect x="384" y="255" width="160" height="72" rx="8" class="dg-box dg-vi"/>
+      <text x="464" y="282" text-anchor="middle" class="dg-t dg-t-vi">Expert post-editing</text>
+      <text x="464" y="302" text-anchor="middle" class="dg-s">Vietnamese doctors and</text>
+      <text x="464" y="317" text-anchor="middle" class="dg-s">final-year med students</text>
+      <rect x="570" y="150" width="160" height="72" rx="8" class="dg-box dg-proc"/>
+      <text x="650" y="177" text-anchor="middle" class="dg-t ">LLM label projection</text>
+      <text x="650" y="197" text-anchor="middle" class="dg-s">gpt-5.2 fills the blank Vi</text>
+      <text x="650" y="212" text-anchor="middle" class="dg-s">fields of a JSON template</text>
+      <rect x="756" y="150" width="160" height="72" rx="8" class="dg-box dg-proc"/>
+      <text x="836" y="177" text-anchor="middle" class="dg-t ">Checks + human review</text>
+      <text x="836" y="197" text-anchor="middle" class="dg-s">1.77% of pairs flagged,</text>
+      <text x="836" y="212" text-anchor="middle" class="dg-s">fixed in Label Studio</text>
+      <rect x="942" y="150" width="160" height="72" rx="8" class="dg-box dg-out"/>
+      <text x="1022" y="177" text-anchor="middle" class="dg-t dg-t-out">En-ViMedNER</text>
+      <text x="1022" y="197" text-anchor="middle" class="dg-s">202,949 aligned</text>
+      <text x="1022" y="212" text-anchor="middle" class="dg-s">entity-mention pairs</text>
+      <path class="dg-ar" marker-end="url(#dg-a1)" d="M172,81 H193"/>
+      <path class="dg-ar" marker-end="url(#dg-a1)" d="M278,117 V250"/>
+      <path class="dg-ar" marker-end="url(#dg-a1)" d="M358,291 H379"/>
+      <path class="dg-ar" marker-end="url(#dg-a1)" d="M358,81 H520 V174 H565"/>
+      <path class="dg-ar" marker-end="url(#dg-a1)" d="M464,255 V198 H565"/>
+      <path class="dg-ar" marker-end="url(#dg-a1)" d="M730,186 H751"/>
+      <path class="dg-ar" marker-end="url(#dg-a1)" d="M916,186 H937"/>
+      <text x="439" y="73" text-anchor="middle" class="dg-lbl">English spans + labels</text>
+      <text x="517" y="191" text-anchor="middle" class="dg-lbl">Vietnamese text</text>
+      <rect x="756" y="252" width="346" height="62" rx="8" class="dg-note"/>
+      <text x="929" y="274" text-anchor="middle" class="dg-s" style="font-weight:700;fill:#4a5460">Mini-test audit &#8212; 450 sentences, two independent reviewers</text>
+      <text x="929" y="292" text-anchor="middle" class="dg-s">Cohen&#8217;s &#954; = 0.83 &#183; 98.32% exact match before correction</text>
+      <path class="dg-ar" marker-end="url(#dg-a1)" d="M1022,252 V228"/>
+      <rect x="12" y="348" width="11" height="11" rx="2.5" fill="#fff" stroke="#2f4a7d" stroke-width="1.5"/>
+      <text x="29" y="357" class="dg-lbl">English source and labels</text>
+      <rect x="206" y="348" width="11" height="11" rx="2.5" fill="#fff" stroke="#c8303a" stroke-width="1.5"/>
+      <text x="223" y="357" class="dg-lbl">Vietnamese text</text>
+      <rect x="344" y="348" width="11" height="11" rx="2.5" fill="#fff" stroke="#8a93a3" stroke-width="1.5"/>
+      <text x="361" y="357" class="dg-lbl">Automated + human processing</text>
+      <rect x="554.8" y="348" width="11" height="11" rx="2.5" fill="#fff" stroke="#1f7a52" stroke-width="1.5"/>
+      <text x="571.8" y="357" class="dg-lbl">Released corpus</text>
+      </svg>
         </div>
+        <p class="figure-caption" style="margin-bottom: 1.5rem;">
+          The English labels never pass through the translator: they are projected onto the
+          already-finalized, expert-post-edited Vietnamese text. That rules out marker-based
+          projection, which needs markers in the English source before translation, and weakens
+          token-alignment tools, because post-editing often paraphrases non-literally
+          (<i>animals</i> &rarr; <i>&#273;&#7897;ng v&#7853;t th&iacute; nghi&#7879;m</i>, "laboratory animals").
+        </p>
 
         <div class="content" style="margin-top: 1.5rem;">
           <p>
@@ -550,6 +608,62 @@
     <div class="columns is-centered">
       <div class="column is-full-width">
         <h2 class="title is-3">Cross-lingual NER: English in, tagged Vietnamese out</h2>
+        <div class="diagram">
+      <svg viewBox="0 0 1010 292" role="img" aria-labelledby="track-title track-desc" style="min-width:760px">
+      <title id="track-title">Three cross-lingual NER pipelines</title>
+      <desc id="track-desc">M1 generates tagged Vietnamese directly from plain English. M2 translates first, then tags the Vietnamese. M3 tags the English first, then translates the tagged sentence.</desc>
+      <defs><marker id="dg-a2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#8a93a3"/></marker></defs>
+      <text x="10" y="58" class="dg-t">M1</text>
+      <text x="10" y="74" class="dg-s">Direct</text>
+      <rect x="125" y="30" width="145" height="64" rx="8" class="dg-box dg-en"/>
+      <text x="197.5" y="57" text-anchor="middle" class="dg-t dg-t-en">English sentence</text>
+      <text x="197.5" y="77" text-anchor="middle" class="dg-s">plain text</text>
+      <path class="dg-ar" marker-end="url(#dg-a2)" d="M270,62 H560"/>
+      <text x="417" y="52" text-anchor="middle" class="dg-lbl">Direct Trans.+NER</text>
+      <rect x="565" y="30" width="170" height="64" rx="8" class="dg-box dg-vi-fill"/>
+      <text x="650" y="57" text-anchor="middle" class="dg-t dg-t-vi">Vietnamese sentence</text>
+      <text x="650" y="77" text-anchor="middle" class="dg-s">with NER tags</text>
+      <text x="755" y="67" class="dg-s" style="font-weight:700;fill:#1f7a52">Best Judge-F1 &#8212; NLLB 45.44</text>
+      <text x="10" y="146" class="dg-t">M2</text>
+      <text x="10" y="162" class="dg-s">Trans. &#8594; NER</text>
+      <rect x="125" y="118" width="145" height="64" rx="8" class="dg-box dg-en"/>
+      <text x="197.5" y="145" text-anchor="middle" class="dg-t dg-t-en">English sentence</text>
+      <text x="197.5" y="165" text-anchor="middle" class="dg-s">plain text</text>
+      <rect x="345" y="118" width="145" height="64" rx="8" class="dg-box dg-vi"/>
+      <text x="417.5" y="145" text-anchor="middle" class="dg-t dg-t-vi">Vietnamese sentence</text>
+      <text x="417.5" y="165" text-anchor="middle" class="dg-s">plain text</text>
+      <path class="dg-ar" marker-end="url(#dg-a2)" d="M270,150 H340"/>
+      <path class="dg-ar" marker-end="url(#dg-a2)" d="M490,150 H560"/>
+      <text x="307" y="140" text-anchor="middle" class="dg-lbl">Trans. only</text>
+      <text x="527" y="140" text-anchor="middle" class="dg-lbl">NER only</text>
+      <rect x="565" y="118" width="170" height="64" rx="8" class="dg-box dg-vi-fill"/>
+      <text x="650" y="145" text-anchor="middle" class="dg-t dg-t-vi">Vietnamese sentence</text>
+      <text x="650" y="165" text-anchor="middle" class="dg-s">with NER tags</text>
+      <text x="755" y="155" class="dg-s" style="font-weight:700;fill:#5a6472">Best BLEU &#8212; NLLB 51.83</text>
+      <text x="10" y="234" class="dg-t">M3</text>
+      <text x="10" y="250" class="dg-s">NER &#8594; Trans.</text>
+      <rect x="125" y="206" width="145" height="64" rx="8" class="dg-box dg-en"/>
+      <text x="197.5" y="233" text-anchor="middle" class="dg-t dg-t-en">English sentence</text>
+      <text x="197.5" y="253" text-anchor="middle" class="dg-s">plain text</text>
+      <rect x="345" y="206" width="145" height="64" rx="8" class="dg-box dg-en-fill"/>
+      <text x="417.5" y="233" text-anchor="middle" class="dg-t dg-t-en">English sentence</text>
+      <text x="417.5" y="253" text-anchor="middle" class="dg-s">with NER tags</text>
+      <path class="dg-ar" marker-end="url(#dg-a2)" d="M270,238 H340"/>
+      <path class="dg-ar" marker-end="url(#dg-a2)" d="M490,238 H560"/>
+      <text x="307" y="228" text-anchor="middle" class="dg-lbl">NER only</text>
+      <text x="527" y="220" text-anchor="middle" class="dg-lbl">Tag-aware</text>
+      <text x="527" y="232" text-anchor="middle" class="dg-lbl">Trans.</text>
+      <rect x="565" y="206" width="170" height="64" rx="8" class="dg-box dg-vi-fill"/>
+      <text x="650" y="233" text-anchor="middle" class="dg-t dg-t-vi">Vietnamese sentence</text>
+      <text x="650" y="253" text-anchor="middle" class="dg-s">with NER tags</text>
+      <text x="755" y="243" class="dg-s" style="font-weight:700;fill:#1f7a52">Best Exact-F1 &#8212; NLLB 15.98</text>
+      </svg>
+        </div>
+        <p class="figure-caption" style="margin-bottom: 2rem;">
+          The three fine-tuned settings. M1 generates the tagged Vietnamese sentence in one step;
+          M2 and M3 split translation and tagging, differing in which comes first.
+        </p>
+
         <p class="figure-caption" style="margin-bottom: 1rem;">
           Mini-test results. <b>Judge-F1</b> comes from an LLM-as-a-judge protocol that accepts a
           semantically equivalent Vietnamese entity translation (human&ndash;LLM agreement, Cohen's
@@ -583,6 +697,19 @@
         <p class="figure-caption">
           The highest-BLEU rows are not the highest-F1 rows: good sentence-level translation does
           not by itself preserve entity boundaries and labels.
+        </p>
+
+        <h3 class="title is-4" style="margin-top: 3rem;">Translation quality against NER quality</h3>
+        <div class="content has-text-centered">
+          <img src="./static/images/bleu-vs-f1.png"
+               alt="Scatter plot of BLEU against F1 for the six encoder-decoder settings. NLLB-M1 sits highest in F1 at 45.4 without the highest BLEU; NLLB-M2 sits furthest right at 51.8 BLEU with a lower F1."
+               style="max-width: 560px; width: 100%;"/>
+        </div>
+        <p class="figure-caption">
+          Circles are <span class="setting-code">umT5-base</span>, squares are
+          <span class="setting-code">NLLB-200-distilled-600M</span>; each point is one setting.
+          The axes do not rank the settings the same way &mdash; M2 sits furthest right in both
+          model families, but M1 sits highest.
         </p>
       </div>
     </div>
