@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+        content="En-ViMedNER: the first English-Vietnamese parallel biomedical NER corpus with UMLS semantic type annotations. 4,392 PubMed abstract pairs, 44,892 sentence pairs, 202,949 aligned entity-mention pairs across 21 UMLS semantic types.">
+  <meta name="keywords" content="Biomedical NER, Vietnamese NLP, UMLS, MedMentions, Cross-lingual NER, Low-resource languages, Parallel corpus">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>En-ViMedNER: An English-Vietnamese Parallel Biomedical Corpus with UMLS Semantic Type Annotations</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+        rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+  <link rel="icon" type="image/png" href="./static/images/favicon.png">
+  <link rel="apple-touch-icon" href="./static/images/favicon.png">
+
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+
+  <style>
+    .setting-code {
+      font-family: 'Menlo', 'Consolas', monospace;
+      font-size: 0.9em;
+      background-color: #f5f5f5;
+      border-radius: 3px;
+      padding: 0.1em 0.3em;
+    }
+    .model-name {
+      font-variant: small-caps;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .result-table { font-size: 0.85rem; }
+    .result-table td, .result-table th { text-align: center; vertical-align: middle; }
+    .result-table td:first-child, .result-table th:first-child { text-align: left; }
+    .table-wrapper { overflow-x: auto; }
+    .columns .column { min-width: 0; }
+    pre { max-width: 100%; overflow-x: auto; }
+    .pos { color: #1f8a4c; font-weight: 600; }
+    .neg { color: #c0392b; font-weight: 600; }
+    .ns  { color: #999; }
+    .finding-card {
+      background-color: #fafafa;
+      border-radius: 6px;
+      padding: 1.25rem;
+      height: 100%;
+    }
+    .finding-card .finding-number {
+      font-family: 'Google Sans', sans-serif;
+      font-size: 2rem;
+      font-weight: 700;
+      line-height: 1;
+      color: #363636;
+    }
+    .figure-caption { font-size: 0.9rem; color: #555; }
+
+    /* Authors */
+    .publication-authors .author-block {
+      font-family: 'Google Sans', sans-serif;
+      font-size: 1.35rem;
+      font-weight: 700;
+      margin: 0 0.4rem;
+      white-space: nowrap;
+    }
+    /* Brand colors sampled from the VinUniversity mark. */
+    .publication-authors .author-block a { color: #2f4a7d; }
+    .publication-authors .author-block a:hover { color: #c8303a; }
+    .publication-authors .author-block sup { font-weight: 500; font-size: 0.7em; color: #7a8aa5; }
+
+    .publication-venue { color: #1f7a52; font-weight: 600; }
+    .publication-venue a {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      color: #1f7a52;
+    }
+    .publication-venue a:hover { color: #2f4a7d; text-decoration: underline; }
+    .publication-venue img { height: 30px; width: auto; display: block; }
+
+    /* Affiliation logos: every mark sits in an identical box and is centred in it,
+       so the logos read as the same size and share one centre line. */
+    .affil-logos {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 2.5rem;
+      margin: 1.5rem auto 0.5rem auto;
+    }
+    .affil-logos .affil {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .affil-logos .affil sup { color: #666; font-size: 0.8rem; }
+    .affil-logos img {
+      height: 46px;
+      width: 62px;
+      object-fit: contain;
+      object-position: center;
+      display: block;
+    }
+
+    /* Corpus headline numbers */
+    .stat-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 1.75rem;
+    }
+    .stat {
+      flex: 1 1 150px;
+      background-color: #eef3f8;
+      border-radius: 6px;
+      padding: 1rem 0.75rem;
+      text-align: center;
+    }
+    .stat .stat-value {
+      font-family: 'Google Sans', sans-serif;
+      font-size: 1.9rem;
+      font-weight: 700;
+      line-height: 1.1;
+      color: #2f4a7d;
+    }
+    .stat .stat-label { font-size: 0.85rem; color: #555; margin-top: 0.35rem; }
+
+    .headline-claim {
+      font-family: 'Google Sans', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      line-height: 1.35;
+      text-wrap: balance;
+      color: #363636;
+    }
+    .headline-claim em { color: #c8303a; font-style: normal; }
+
+    /* Link buttons */
+    .publication-links {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+    }
+    .publication-links .link-block { display: inline-flex; }
+    .publication-links .button { max-width: 100%; white-space: normal; height: auto; }
+
+    /* Title: the corpus name carries the page; the descriptive subtitle sits under it. */
+    .publication-title {
+      overflow-wrap: break-word;
+      text-wrap: balance;
+      margin-bottom: 1.5rem !important;
+    }
+    .publication-title .title-name {
+      display: block;
+      font-size: 4.25rem;
+      font-weight: 700;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      color: #2f4a7d;
+    }
+    .publication-title .title-name .accent { color: #c8303a; }
+    .publication-title .title-sub {
+      display: block;
+      margin-top: 0.6rem;
+      font-size: 1.65rem;
+      font-weight: 500;
+      line-height: 1.3;
+      color: #4a4a4a;
+    }
+    @media screen and (max-width: 768px) {
+      .publication-title .title-name { font-size: 2.5rem; }
+      .publication-title .title-sub { font-size: 1.1rem; margin-top: 0.4rem; }
+
+      .publication-authors .author-block {
+        font-size: 1rem;
+        margin: 0 0.25rem;
+        white-space: normal;
+      }
+
+      .affil-logos { gap: 1.25rem; margin-top: 1rem; }
+      .affil-logos img { height: 32px; width: 44px; }
+
+      .publication-venue.is-size-5 { font-size: 0.9rem !important; }
+      .publication-venue a { flex-wrap: wrap; justify-content: center; gap: 0.35rem; }
+      .publication-venue img { height: 22px; }
+      .publication-links { gap: 0.5rem; }
+      .publication-links .button.is-normal { font-size: 0.85rem; }
+
+      .headline-claim { font-size: 1.15rem; }
+      .stat .stat-value { font-size: 1.5rem; }
+    }
+    @media screen and (min-width: 769px) and (max-width: 1023px) {
+      .publication-title .title-name { font-size: 3.25rem; }
+      .publication-title .title-sub { font-size: 1.35rem; }
+      .publication-authors .author-block { font-size: 1.15rem; }
+      .affil-logos img { height: 40px; width: 54px; }
+    }
+
+    /* Headline table */
+    .headline-table { font-size: 0.95rem; }
+    .headline-table th, .headline-table td { vertical-align: middle; }
+    .headline-table thead th { text-align: center; }
+    .headline-table td:not(:first-child) { text-align: center; }
+    .headline-table .row-label { font-weight: 600; }
+    .headline-table .hero-row {
+      background-color: #eef3f8;
+      font-size: 1.05rem;
+    }
+  </style>
+</head>
+<body>
+
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title"><span class="title-name">En-<span class="accent">Vi</span>MedNER</span><span class="title-sub">An English&ndash;Vietnamese Parallel Biomedical Corpus with UMLS Semantic Type Annotations</span></h1>
+
+          <div class="publication-authors">
+            <span class="author-block">
+              <a href="mailto:nhu.vd@vinuni.edu.vn">Nhu Vo</a><sup>1,2,*</sup>,</span>
+            <span class="author-block">
+              <a href="https://www.webofscience.com/wos/author/record/GLV-1763-2022" target="_blank" rel="noopener">Phuong Nguyen</a><sup>1,*</sup>,</span>
+            <span class="author-block">
+              <a href="https://www.linkedin.com/in/phuonglnu2002" target="_blank" rel="noopener">Nu Uyen Phuong Le</a><sup>1</sup>,</span>
+            <span class="author-block">
+              <a href="https://scholar.google.com/citations?user=o5X7jlgAAAAJ&amp;hl=es" target="_blank" rel="noopener">I&ntilde;igo Jauregi Unanue</a><sup>2</sup>,</span>
+            <span class="author-block">
+              <a href="https://andrew-dungle.github.io/" target="_blank" rel="noopener">Dung D. Le</a><sup>1</sup>,</span>
+            <span class="author-block">
+              <a href="https://profiles.uts.edu.au/massimo.piccardi" target="_blank" rel="noopener">Massimo Piccardi</a><sup>2</sup>,</span>
+            <span class="author-block">
+              <a href="https://vinuni.edu.vn/people/wray-buntine-phd/" target="_blank" rel="noopener">Wray Buntine</a><sup>1,3</sup></span>
+          </div>
+
+          <div class="affil-logos">
+            <span class="affil"><sup>1</sup><img src="./static/images/logos/vinuni.webp" alt="VinUniversity" title="VinUniversity &mdash; College of Engineering &amp; Computer Science and Center for AI Research"></span>
+            <span class="affil"><sup>2</sup><img src="./static/images/logos/uts.svg" alt="University of Technology Sydney" title="University of Technology Sydney &mdash; Faculty of Engineering and IT"></span>
+            <span class="affil"><sup>3</sup><img src="./static/images/logos/monash.webp" alt="Monash University" title="Monash University"></span>
+          </div>
+
+          <p class="is-size-7 has-text-grey" style="margin-top: 0.75rem;"><sup>*</sup>Equal contribution.</p>
+
+          <div class="is-size-5 publication-venue" style="margin: 1rem auto 0 auto;">
+            <a href="https://2026.emnlp.org/" target="_blank" rel="noopener">
+              <img src="./static/images/logos/emnlp2026.png" alt="EMNLP 2026, Budapest">
+            </a>
+          </div>
+
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <span class="link-block">
+                <a href="https://arxiv.org/pdf/2608.29890"
+                   target="_blank" rel="noopener"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon"><i class="fas fa-file-pdf"></i></span>
+                  <span>Paper</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a href="https://arxiv.org/abs/2608.29890"
+                   target="_blank" rel="noopener"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon"><i class="ai ai-arxiv"></i></span>
+                  <span>arXiv</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a href="https://huggingface.co/collections/nhuvo/en-vimedner"
+                   target="_blank" rel="noopener"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon"><i class="fas fa-database"></i></span>
+                  <span>Corpus &amp; Models</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a href="https://vinuni-medical-mt.github.io/"
+                   target="_blank" rel="noopener"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon"><i class="fas fa-flask"></i></span>
+                  <span>Medical MT Project</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a href="https://meddict-vinuni.com/"
+                   target="_blank" rel="noopener"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon"><i class="fas fa-book-medical"></i></span>
+                  <span>MedDict</span>
+                </a>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="section" style="padding-bottom: 0;">
+  <div class="container is-max-desktop">
+    <p class="headline-claim has-text-centered">
+      For Vietnamese biomedical NER, <em>multilingual pretraining and frontier LLM prompting are
+      no substitute for target-language annotation</em>: a Vietnamese encoder fine-tuned on
+      En-ViMedNER reaches <b>52.70&nbsp;F1</b> &mdash; 16.16 points above English-supervised
+      multilingual transfer on the same test set, and 17.31 above the best 3-shot frontier LLM on
+      the human-audited mini-test.
+    </p>
+
+    <div class="stat-row">
+      <div class="stat">
+        <div class="stat-value">4,392</div>
+        <div class="stat-label">PubMed abstract pairs</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">44,892</div>
+        <div class="stat-label">En&ndash;Vi sentence pairs</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">202,949</div>
+        <div class="stat-label">Aligned entity-mention pairs</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">21</div>
+        <div class="stat-label">UMLS semantic types</div>
+      </div>
+    </div>
+
+    <div class="table-wrapper" style="margin-top: 2rem;">
+      <table class="table is-bordered is-hoverable is-fullwidth headline-table">
+        <thead>
+          <tr>
+            <th>Vietnamese biomedical NER &mdash; best system per setting</th>
+            <th>mini-test F1</th>
+            <th>Full test F1</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="hero-row">
+            <td class="row-label">Vietnamese-supervised encoder &mdash; <span class="model-name">ViPubMedDeBERTa</span><sup>&dagger;</sup></td>
+            <td><b>53.78</b></td>
+            <td><b>52.70</b></td>
+          </tr>
+          <tr>
+            <td class="row-label">English-supervised multilingual encoder &mdash; <span class="model-name">XLM-R-large</span></td>
+            <td class="neg">37.95</td>
+            <td class="neg">36.54</td>
+          </tr>
+          <tr>
+            <td class="row-label">Best prompted LLM &mdash; <span class="model-name">gemini-3.1-flash-lite-preview</span>, 3-shot</td>
+            <td class="neg">36.47</td>
+            <td class="ns">&mdash;</td>
+          </tr>
+          <tr>
+            <td class="row-label">Best open-source LLM &mdash; <span class="model-name">Qwen-SEA-LION-v4-8B-VL</span>, 3-shot</td>
+            <td class="neg">13.09</td>
+            <td class="ns">&mdash;</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="figure-caption has-text-centered">
+      Vietnamese supervision beats English-supervised transfer by 16.16&nbsp;F1 and the strongest
+      prompted frontier LLM by 17.31&nbsp;F1 &mdash; so En-ViMedNER is a training resource, not
+      only a benchmark. Prompt-based LLMs are evaluated on the mini-test only.
+      <sup>&dagger;</sup>The best checkpoint differs by split: <span class="model-name">ViPubMedDeBERTa-xsmall</span>
+      on the mini-test (53.78), <span class="model-name">ViPubMedDeBERTa-base</span> on the full
+      test set (52.70).
+    </p>
+  </div>
+</section>
+
+
+<section class="section" id="summary">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Summary</h2>
+        <div class="content has-text-justified">
+          <p>
+            Biomedical named entity recognition underpins clinical decision support and medical
+            information extraction. English has UMLS-annotated corpora such as
+            <a href="https://github.com/chanzuckerberg/MedMentions" target="_blank" rel="noopener">MedMentions</a>;
+            Vietnamese has nothing comparable. We present <b>En-ViMedNER</b>, the first
+            English&ndash;Vietnamese parallel biomedical NER corpus annotated with UMLS semantic
+            types &mdash; language-neutral codes that give both sides a shared label space and keep
+            the resource directly comparable with existing UMLS-based corpora.
+          </p>
+          <p>
+            The corpus contains 4,392 PubMed abstract pairs, 44,892 sentence pairs, and 202,949
+            aligned entity-mention pairs across the 21 semantic types of MedMentions ST21pv. To
+            balance quality against scale, we built it through automatic translation, medical
+            expert post-editing, LLM-assisted label projection, and human verification and
+            adjudication. We characterise it as a large-scale <b>silver-standard</b> corpus with a
+            human-audited, consensus-corrected 450-sentence mini-test subset.
+          </p>
+          <p>
+            We evaluate it in two settings. In <b>Vietnamese-input/Vietnamese-output NER</b>, the
+            best model reaches 52.70&nbsp;F1 on the test set and 53.78 on the mini-test. In
+            <b>English-input/Vietnamese-output cross-lingual NER</b>, the best model reaches
+            45.44&nbsp;F1 on the mini-test. We release the corpus, the construction pipeline, and
+            the baseline models, and we argue that similar semi-automated efforts are worth making
+            for other low-resource languages.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="section" id="method">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3">How we built the corpus</h2>
+        <div class="content">
+          <p>
+            We start from MedMentions ST21pv, drop overlapping and unlabeled sentences, and carry
+            the English UMLS annotations across to Vietnamese in three stages.
+          </p>
+        </div>
+
+        <div class="columns">
+          <div class="column">
+            <div class="finding-card">
+              <p class="finding-number">1</p>
+              <p><b>Translate, then post-edit by hand.</b> We translate with
+              <span class="setting-code">vinai-translate-en2vi-v2</span>, then Vietnamese medical
+              experts &mdash; final-year medical students and doctors &mdash; review every sentence
+              for terminology, fluency, and preserved biomedical meaning, deciding per term whether
+              to translate it or keep the English form.</p>
+            </div>
+          </div>
+          <div class="column">
+            <div class="finding-card">
+              <p class="finding-number">2</p>
+              <p><b>Project the labels with an LLM.</b> We map each English entity onto its
+              Vietnamese span with <span class="setting-code">gpt-5.2</span>, keeping the same
+              semantic type. Marker-based and token-alignment projection do not fit here: the
+              post-edited text is already final and often paraphrases non-literally.</p>
+            </div>
+          </div>
+          <div class="column">
+            <div class="finding-card">
+              <p class="finding-number">3</p>
+              <p><b>Verify and adjudicate.</b> Automatic consistency checks flag 1.77% of sentence
+              pairs for manual review in Label Studio. Two authors then independently audit the
+              450-sentence mini-test and correct every confirmed error by consensus.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="content" style="margin-top: 1.5rem;">
+          <p>
+            The audit measures the projection itself: <b>98.32% entity-level exact match</b> before
+            any manual correction, with pooled Cohen's <i>&kappa;</i>&nbsp;=&nbsp;0.83 between the
+            two independent reviewers. The mini-test we release is the corrected version; the
+            98.32% figure describes what the LLM projection got right on its own.
+          </p>
+        </div>
+
+        <div class="table-wrapper">
+          <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth result-table">
+            <thead>
+              <tr><th>Split</th><th>Abstract pairs</th><th>Sentence pairs</th><th>Aligned entity-mention pairs</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>train</td><td>2,635</td><td>27,013</td><td>122,017</td></tr>
+              <tr><td>dev</td><td>878</td><td>8,932</td><td>40,844</td></tr>
+              <tr><td>test</td><td>879</td><td>8,947</td><td>40,088</td></tr>
+              <tr><td>mini-test<sup>&dagger;</sup></td><td>&mdash;</td><td>450</td><td>2,085</td></tr>
+              <tr style="background-color: #eef3f8;"><td><b>Total</b></td><td><b>4,392</b></td><td><b>44,892</b></td><td><b>202,949</b></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="figure-caption"><sup>&dagger;</sup>The mini-test is sampled from the test set for human evaluation; it is not an additional split.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="section" id="findings">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3">What we found</h2>
+        <div class="content has-text-justified">
+          <p>
+            <b>Vietnamese supervision cannot be replaced by English supervision.</b> Fine-tuned on
+            the Vietnamese split, <span class="model-name">ViPubMedDeBERTa-base</span> reaches
+            52.70&nbsp;F1 on the full test set &mdash; 16.16 points above
+            <span class="model-name">XLM-R-large</span> fine-tuned on the English split and
+            evaluated on the same Vietnamese text. Multilingual pretraining does not transfer
+            Vietnamese entity boundaries, terminology, or labels for free.
+          </p>
+          <p>
+            <b>Few-shot examples help LLMs, but not enough.</b> Prompting improves steeply with
+            examples &mdash; <span class="model-name">gemini-3.1-flash-lite-preview</span> goes from 12.70
+            to 36.47&nbsp;F1 between zero-shot and 3-shot, and
+            <span class="model-name">Qwen-SEA-LION-v4-8B-VL</span> from 1.59 to 13.09 &mdash; yet the
+            best prompted model still trails the best fine-tuned encoder by 17.31&nbsp;F1. In-context
+            examples teach the BIO format, not the biomedical task.
+          </p>
+          <p>
+            <b>Parallel supervision also carries cross-lingual NER.</b> On English-input/
+            Vietnamese-output generation, fine-tuned <span class="model-name">NLLB-M1</span> reaches
+            45.44 Judge-F1, ahead of <span class="model-name">gpt-5.4</span>-3shot by 2.80 and
+            <span class="model-name">gemini-3.1-flash-lite-preview</span>-3shot by 3.89 points.
+          </p>
+          <p>
+            <b>End-to-end and cascaded pipelines win under different metrics.</b> Direct
+            translate-and-tag generation is best under Judge-F1 (which accepts a valid Vietnamese
+            paraphrase of a gold entity), while the tag-first
+            NER&nbsp;&rarr;&nbsp;translate cascade is best under the stricter Exact-F1, reaching
+            15.98 for <span class="model-name">NLLB-M3</span>. Which pipeline is better depends on
+            what you are willing to count as correct.
+          </p>
+          <p>
+            <b>Higher BLEU does not imply better NER.</b> <span class="model-name">NLLB-M2</span>
+            has the best BLEU of the NLLB systems but a lower F1 than
+            <span class="model-name">NLLB-M1</span>; the same inversion appears for umT5. Fluent
+            translation is not the same as preserving entity spans and labels through translation.
+          </p>
+          <p>
+            <b>Open-source LLMs mostly fail to emit valid output.</b> Between 114 and 292 of 450
+            cross-lingual outputs come back unparseable or entirely untagged, which caps their
+            Judge-F1 at 18.43 even for the strongest of them.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="section" id="results">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3">Cross-lingual NER: English in, tagged Vietnamese out</h2>
+        <p class="figure-caption" style="margin-bottom: 1rem;">
+          Mini-test results. <b>Judge-F1</b> comes from an LLM-as-a-judge protocol that accepts a
+          semantically equivalent Vietnamese entity translation (human&ndash;LLM agreement, Cohen's
+          <i>&kappa;</i>&nbsp;=&nbsp;0.87); <b>Exact-F1</b> requires an exact surface and label match.
+          <b>Inv.</b> counts generated sentences with no valid entity tags, out of 450. The
+          fine-tuned encoder-decoders are <span class="setting-code">umT5-base</span> and
+          <span class="setting-code">NLLB-200-distilled-600M</span>.
+        </p>
+        <div class="table-wrapper">
+          <table class="table is-bordered is-striped is-narrow is-hoverable is-fullwidth result-table">
+            <thead>
+              <tr>
+                <th>Setting / Model</th><th>BLEU</th><th>Judge-F1</th><th>Exact-F1</th><th>Inv.</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td colspan="5" style="background-color:#f5f5f5;"><b>Fine-tuned multilingual encoder-decoder models</b></td></tr>
+              <tr style="background-color: #eef3f8;"><td><span class="model-name">NLLB</span>-M1: Direct Trans.+NER</td><td>48.63</td><td><b>45.44</b></td><td>15.77</td><td>0</td></tr>
+              <tr><td><span class="model-name">NLLB</span>-M2: Trans. &rarr; NER</td><td>51.83</td><td>40.87</td><td>13.64</td><td>0</td></tr>
+              <tr><td><span class="model-name">NLLB</span>-M3: NER &rarr; Trans.</td><td>46.90</td><td>39.02</td><td><b>15.98</b></td><td>0</td></tr>
+              <tr><td><span class="model-name">umT5</span>-M1: Direct Trans.+NER</td><td>29.85</td><td>26.88</td><td>6.01</td><td>0</td></tr>
+              <tr><td><span class="model-name">umT5</span>-M3: NER &rarr; Trans.</td><td>31.15</td><td>26.64</td><td>7.33</td><td>0</td></tr>
+              <tr><td colspan="5" style="background-color:#f5f5f5;"><b>Prompt-based LLMs (3-shot)</b></td></tr>
+              <tr><td><span class="model-name">gpt-5.4</span></td><td>53.34</td><td>42.64</td><td>9.84</td><td>0</td></tr>
+              <tr><td><span class="model-name">gemini-3.1-flash-lite-preview</span></td><td>48.80</td><td>41.55</td><td>10.40</td><td>0</td></tr>
+              <tr><td><span class="model-name">Qwen-SEA-LION-v4-8B-VL</span></td><td>52.89</td><td>18.43</td><td>9.85</td><td class="neg">228</td></tr>
+              <tr><td><span class="model-name">Qwen2.5-7B-Instruct</span></td><td>43.66</td><td>11.94</td><td>5.34</td><td class="neg">115</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="figure-caption">
+          The highest-BLEU rows are not the highest-F1 rows: good sentence-level translation does
+          not by itself preserve entity boundaries and labels.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<section class="section">
+  <div class="container is-max-desktop content">
+    <h2 class="title is-4">Limitations</h2>
+    <p>
+      En-ViMedNER is a silver-standard corpus: exhaustive independent verification and consensus
+      adjudication cover the 450-sentence mini-test, not all 44,892 sentence pairs, and random
+      sampling does not guarantee coverage of every rare semantic type or difficult translation
+      phenomenon. Annotation and evaluation run at the sentence level, so translations that depend
+      on abstract-level context (<i>animals</i> &rarr; <i>&#273;&#7897;ng v&#7853;t th&iacute; nghi&#7879;m</i>,
+      "laboratory animals") can read as unnatural in isolation, and the same surface form may be
+      translated in one place and kept in English in another. The corpus is built from PubMed
+      abstracts, so models trained on it should not be assumed reliable on clinical notes,
+      patient-facing text, or safety-critical applications without further validation.
+    </p>
+  </div>
+</section>
+
+
+<section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <h2 class="title">BibTeX</h2>
+    <pre><code>@inproceedings{vo-etal-2026-en-vimedner,
+    title = "{E}n-{V}i{M}ed{NER}: An {E}nglish-{V}ietnamese Parallel Biomedical Corpus with {UMLS} Semantic Type Annotations",
+    author = "Vo, Nhu  and
+      Nguyen, Phuong  and
+      Le, Nu Uyen Phuong  and
+      Jauregi Unanue, Inigo  and
+      Le, Dung D.  and
+      Piccardi, Massimo  and
+      Buntine, Wray",
+    booktitle = "Proceedings of the 2026 Conference on Empirical Methods in Natural Language Processing ({EMNLP} 2026)",
+    month = oct,
+    year = "2026",
+    address = "Budapest, Hungary",
+    publisher = "Association for Computational Linguistics",
+    note = "To appear"
+}</code></pre>
+  </div>
+</section>
+
+
+<section class="section">
+  <div class="container is-max-desktop content">
+    <h2 class="title is-4">Acknowledgments</h2>
+    <p>
+      This work is part of our wider
+      <a href="https://vinuni-medical-mt.github.io/" target="_blank" rel="noopener">medical machine
+      translation project</a> at VinUniversity. This research was undertaken within the framework of the Cross-College project
+      <i>Robust Vietnamese&ndash;English Clinical and Educational Medical Translation</i>
+      (Project ID: VUNI.2324.CC06), jointly undertaken by the College of Engineering &amp; Computer
+      Science and the College of Health Sciences at VinUniversity. Nhu Vo acknowledges financial
+      support from the Vingroup Scholarship and the University of Technology Sydney. Dung D. Le
+      acknowledges partial funding from the Center for AI Research at VinUniversity.
+    </p>
+    <p>
+      En-ViMedNER follows the licensing conditions of both MedMentions (CC0) and UMLS. We retain
+      only UMLS semantic type codes (e.g. <span class="setting-code">T047</span>) as labels, and do
+      not publish UMLS concept names, definitions, or hierarchy information.
+    </p>
+  </div>
+</section>
+
+
+<footer class="footer">
+  <div class="container">
+    <div class="content has-text-centered">
+      <a class="icon-link" href="https://arxiv.org/pdf/2608.29890" target="_blank" rel="noopener">
+        <i class="fas fa-file-pdf"></i>
+      </a>
+      <a class="icon-link" href="https://arxiv.org/abs/2608.29890" target="_blank" rel="noopener">
+        <i class="ai ai-arxiv"></i>
+      </a>
+      <a class="icon-link" href="https://huggingface.co/collections/nhuvo/en-vimedner" target="_blank" rel="noopener">
+        <i class="fas fa-database"></i>
+      </a>
+      <a class="icon-link" href="https://vinuni-medical-mt.github.io/" target="_blank" rel="noopener">
+        <i class="fas fa-home"></i>
+      </a>
+    </div>
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+          <p>
+            This website is licensed under a <a rel="license noopener" target="_blank"
+                                                href="http://creativecommons.org/licenses/by-sa/4.0/">Creative
+            Commons Attribution-ShareAlike 4.0 International License</a>.
+          </p>
+          <p>
+            This website borrows the <a href="https://github.com/nerfies/nerfies.github.io" target="_blank" rel="noopener">source
+            code</a> of the <a href="https://nerfies.github.io" target="_blank" rel="noopener">Nerfies</a> project page.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
